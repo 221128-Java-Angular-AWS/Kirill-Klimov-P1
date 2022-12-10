@@ -34,7 +34,5 @@ public class DBConnection {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        Integer a = 4;
-        a.equals()
     }
 }

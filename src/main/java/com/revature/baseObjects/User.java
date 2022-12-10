@@ -9,10 +9,9 @@ public class User {
     private int userId;
     private String firstName;
     private String lastName;
-    private String password;
     private String username;
+    private String password;
     private String title;
-    private int taskId;
 
     //private String time_created;
     //no args: constructor:
@@ -26,7 +25,6 @@ public class User {
         this.password = password;
         this.username = username;
         this.title = title;
-        this.taskId = taskId;
     }
 
     public User(String firstName, String lastName, String password, String username, String title, int taskId){
@@ -35,7 +33,6 @@ public class User {
         this.password = password;
         this.username = username;
         this.title = title;
-        this.taskId = taskId;
     }
 
     public int getUserId(){
@@ -45,13 +42,6 @@ public class User {
         this.userId = userId;
     }
 
-
-    public int getTaskId(){
-        return this.taskId;
-    }
-    public void setTaskId(int taskId){
-        this.taskId = taskId;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -100,11 +90,11 @@ public class User {
         }
         if (o==null || this.getClass() != o.getClass()) return false;
         User user = (User) o;
-        return userId == user.userId && taskId == user.taskId && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(password, user.password) && Objects.equals(username, user.username) && Objects.equals(title, user.title);
+        return userId == user.userId && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(password, user.password) && Objects.equals(username, user.username) && Objects.equals(title, user.title);
     }
     @Override
     public int hashCode() {
-        return Objects.hash(userId, firstName, lastName, password, username, title, taskId);
+        return Objects.hash(userId, firstName, lastName, password, username, title);
     }
 
 }

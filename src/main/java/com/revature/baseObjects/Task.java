@@ -9,36 +9,48 @@ public class Task {
     private Boolean completed;
     private String description;
     private String title;
+    private Integer user_id;
 
-    public Task() {}
-
-    public Task( Boolean completed, String description, String title){
-        this.completed = completed;
-        this.description = description;
-        this.title = title;
+    public Task() {
     }
 
-    public Task(Integer taskId, Boolean completed, String description, String title) {
+    public Task(Integer taskId, Boolean completed, String description, String title, Integer user_id) {
         this.taskId = taskId;
         this.completed = completed;
         this.description = description;
         this.title = title;
+        this.user_id = user_id;
     }
 
-    public Integer getTaskId(){
-        return this.taskId;
+    public Task(Boolean completed, String description, String title, Integer user_id) {
+        this.completed = completed;
+        this.description = description;
+        this.title = title;
+        this.user_id = user_id;
     }
 
-    public void setTaskId(Integer taskId){
+    public Integer getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(Integer taskId) {
         this.taskId = taskId;
     }
 
-    public void setDescription(String description){
-        this.description = description;
+    public Boolean getCompleted() {
+        return completed;
     }
 
-    public String getDescription(){
-        return this.description;
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getTitle() {
@@ -49,24 +61,31 @@ public class Task {
         this.title = title;
     }
 
-    public void setCompleted(Boolean completed){
-        this.completed = completed;
+    public Integer getUser_id() {
+        return user_id;
     }
 
-    public Boolean getCompleted(){
-        return this.completed;
+    public void setUser_id(Integer user_id) {
+        this.user_id = user_id;
     }
-    @Override
+
+    /*@Override
     public boolean equals(Object o){
-        if (o==this) return true;
-        if(o==null || this.getClass() != o.getClass()) return false;
+        if (this==o) return true;
+        if (o==null || o.getClass() != this.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(task.completed, this.completed) && Objects.equals(this.taskId, task.taskId) && Objects.equals(description, task.description) && Objects.equals(title, task.title);
+    }*/
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return Objects.equals(taskId, task.taskId) && Objects.equals(completed, task.completed) && Objects.equals(description, task.description) && Objects.equals(title, task.title) && Objects.equals(user_id, task.user_id);
     }
 
     @Override
-    public int hashCode(){
-        return Objects.hash(taskId, completed, description, title);
+    public int hashCode() {
+        return Objects.hash(taskId, completed, description, title, user_id);
     }
 }

@@ -1,7 +1,11 @@
 package com.revature.persistence;
 import java.sql.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.revature.baseObjects.User;
+import com.revature.exceptions.IncorrectPasswordException;
+import com.revature.exceptions.UserNotFoundException;
 
 public class UserDao {
     private Connection connection;
@@ -31,11 +35,22 @@ public class UserDao {
         }
     }
 
-    public User authenticate(String username, String password){
+    public User authenticate(String username, String password) throws UserNotFoundException, IncorrectPasswordException{
         String sql = "SELECT * FROM users WHERE username = ?;";
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, username);
+
+            ResultSet rs = pstmt.executeQuery();
+            if(!rs.next()){
+                throw new UserNotFoundException("This username does not exist in our database");
+            }
+            User user = new User(rs.getInt("user_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("username"),
+                    rs.getString("password"), rs.getString("title"));
+            if (password.equals(user.getPassword())){
+                return user;
+            }
+            throw new IncorrectPasswordException("The password you have entered is incorrect.");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -55,6 +70,24 @@ public class UserDao {
             throw new RuntimeException();
         }
     }
+
+    public Set<User> getAllUsers(){
+        String sql = "SELECT * FROM users";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            Set<User> setUsers = new HashSet<>();
+            while (rs.next()){
+                User user = new User(rs.getInt("user_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("username"),
+                        rs.getString("password"), rs.getString("title"));
+                setUsers.add(user);
+            }
+            return setUsers;
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     public void delete(User user){
         String sql = "DELETE FROM users WHERE USER_ID = ?";
         try {
@@ -65,4 +98,5 @@ public class UserDao {
             throw new RuntimeException(e);
         }
     }
+
 }

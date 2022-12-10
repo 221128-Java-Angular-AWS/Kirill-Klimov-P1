@@ -10,7 +10,7 @@ public class DBConnection {
     public void test() {
         connect();
     }
-    private static Connection connect() {
+    private static void connect() {
         Properties props = new Properties();
         ClassLoader loader = Thread.currentThread().getContextClassLoader(); //for accessing files not visible when running for stream;
         InputStream inputStream = loader.getResourceAsStream("InfoResources1.properties");
@@ -34,5 +34,7 @@ public class DBConnection {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+        Integer a = 4;
+        a.equals()
     }
 }

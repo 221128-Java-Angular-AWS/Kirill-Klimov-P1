@@ -9,7 +9,7 @@ import java.util.Properties;
 public class Connector {
     private static Connection connection;
     private static String resourcesFile = "InfoResources1.properties";
-    private Connector(){
+    public Connector(){
 
     }
 
@@ -38,9 +38,8 @@ public class Connector {
             blder.append(props.getProperty("dbname"));
             blder.append("?user=");
             blder.append(props.getProperty("username"));
-            blder.append("&");
+            blder.append("&password=");
             blder.append((props.getProperty("password")));
-
             connection = DriverManager.getConnection(blder.toString());
 
 

@@ -41,7 +41,7 @@ public class Connector {
             blder.append("&password=");
             blder.append((props.getProperty("password")));
             connection = DriverManager.getConnection(blder.toString());
-
+            //run here ?
 
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);

@@ -97,4 +97,16 @@ public class User {
         return Objects.hash(userId, firstName, lastName, password, username, title);
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", title=" + title + '\'' +
+                '}';
+    }
+
 }

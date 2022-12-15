@@ -22,10 +22,8 @@ public class ReimbursementDao {
             pstmt.setString(2, reimbursement.getApproved().toString());
             pstmt.setString(3, reimbursement.getDescription());
             pstmt.setInt(4, reimbursement.getUserId());
-
             pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();
-
             if(rs.next()){
                 reimbursement.setTaskId(rs.getInt("task_id"));
             }
@@ -53,6 +51,49 @@ public class ReimbursementDao {
         return reimbursements;
     }
 
+    public Set<Reimbursement> viewTicketsForAUser(Integer userId){
+        Set<Reimbursement> reimbursements= new HashSet<>();
+        String sql = "SELECT * FROM reimbursements WHERE user_id = ?";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1, userId);
+
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()){
+                Reimbursement reimbursement = new Reimbursement(rs.getInt("task_id"), rs.getString("title"), rs.getBoolean("approved"),
+                        rs.getString("description"), rs.getInt("user_id"));
+                reimbursements.add(reimbursement);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return reimbursements;
+    }
+    public Set<Reimbursement> filterByApproval(String approvedType){
+        Set<Reimbursement> reimbursements = new HashSet<>();
+        String sql = "SELECT * FROM reimbursements " +
+                "WHERE approved = ?";
+        try{
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, approvedType);
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()){
+                Reimbursement reimbursement = new Reimbursement(
+                        rs.getInt("task_id"),
+                        rs.getString("title"),
+                        rs.getBoolean("approved"),
+                        rs.getString("description"),
+                        rs.getInt("user_id"));
+                reimbursements.add(reimbursement);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+        return reimbursements;
+    }
+
     public void alterApproval(Reimbursement reimbursement){
         //search for all reimbursements where task_id = x
         String sql = "UPDATE reimbursements SET approved = ? WHERE task_id = ?";
@@ -63,6 +104,5 @@ public class ReimbursementDao {
         } catch (SQLException e){
             throw new RuntimeException();
         }
-
     }
 }

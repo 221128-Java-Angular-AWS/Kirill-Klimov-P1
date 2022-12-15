@@ -10,10 +10,15 @@ public class UserService {
 
     public void registerNewUser(User user) {
         //logging, val.,
-        userDao.create(user);
+        userDao.createUser(user);
     }
 
     public Set<User> getAllUsers(){
         return userDao.getAllUsers();
+    }
+
+    public void createUser(User user){
+        System.out.println("in method");
+        userDao.createUser(user);
     }
 }

@@ -14,7 +14,7 @@ public class UserDao {
         this.connection = Connector.makeConnection();
     }
 
-    public void create(User user){
+    public void createUser(User user){
         String sql = "INSERT INTO users (first_name, last_name, username, password) VALUES (?,?,?,?)";
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -88,6 +88,7 @@ public class UserDao {
         }
         return null;
     }
+
     public void delete(User user){
         String sql = "DELETE FROM users WHERE USER_ID = ?";
         try {

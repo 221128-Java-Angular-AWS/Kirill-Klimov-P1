@@ -28,7 +28,7 @@ public class UserDao {
 
             if(rs.next()){
                 user.setUserId(rs.getInt("user_id"));
-                System.out.println("Debuggin: "+ user.getUserId());
+                System.out.println("Debugging: "+ user.getUserId());
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

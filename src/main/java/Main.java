@@ -14,7 +14,7 @@ public class Main {
 
         webApp.get("/ping", (ctx) -> {
             ctx.result("pong!");
-            ctx.result(ctx.body());
+            //ctx.result(ctx.body());
             ctx.status(200);
         });
 
@@ -25,12 +25,11 @@ public class Main {
             ctx.status(201);
         });
 
-        webApp.post("/storeUser", ctx -> {
 
-            String name = ctx.formParam("objectName");
-            System.out.println(name);
-            //ctx.result(ctx.body());
-            //System.out.println(ctx.body().toString());
+        webApp.post("/storeUser", ctx -> {
+            String name = ctx.formParam("objectName"); //query param.
+            Object obj = ctx.bodyAsClass(Object.class);
+            DataStore.storeObject(name, obj);
             ctx.status(201);
         });
 
@@ -38,7 +37,7 @@ public class Main {
         webApp.get("/retrieveData", ctx ->{
             String name = ctx.formParam("objectName");
             Object obj = DataStore.getObject(name);
-            ctx.json(obj);
+            ctx.json(obj);  //calls result(), and sets c type to json.
             ctx.status(200);
         });
 

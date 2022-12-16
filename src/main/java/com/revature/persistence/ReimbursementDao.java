@@ -51,7 +51,7 @@ public class ReimbursementDao {
         return reimbursements;
     }
 
-    public Set<Reimbursement> viewTicketsForAUser(Integer userId){
+    public Set<Reimbursement> getAllReimbursementsForAUser(Integer userId){
         Set<Reimbursement> reimbursements= new HashSet<>();
         String sql = "SELECT * FROM reimbursements WHERE user_id = ?";
         try {
@@ -70,13 +70,13 @@ public class ReimbursementDao {
         }
         return reimbursements;
     }
-    public Set<Reimbursement> filterByApproval(String approvedType){
+    public Set<Reimbursement> filterByApproval(Boolean approvedType){
         Set<Reimbursement> reimbursements = new HashSet<>();
         String sql = "SELECT * FROM reimbursements " +
                 "WHERE approved = ?";
         try{
             PreparedStatement pstmt = connection.prepareStatement(sql);
-            pstmt.setString(1, approvedType);
+            pstmt.setBoolean(1, approvedType);
             ResultSet rs = pstmt.executeQuery();
             while(rs.next()){
                 Reimbursement reimbursement = new Reimbursement(

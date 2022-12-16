@@ -69,5 +69,7 @@
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.7.10" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:13.0" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10" level="project" />
+    <orderEntry type="library" name="Maven: org.postgresql:postgresql:42.5.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.checkerframework:checker-qual:3.5.0" level="project" />
   </component>
 </module>

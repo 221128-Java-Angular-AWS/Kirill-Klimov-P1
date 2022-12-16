@@ -1,4 +1,5 @@
 package com.revature.service;
+import com.revature.exceptions.*;
 import com.revature.persistence.UserDao;
 import com.revature.baseObjects.User;
 import java.util.Set;
@@ -17,8 +18,14 @@ public class UserService {
         return userDao.getAllUsers();
     }
 
+    public User authenticateUser(User user) throws UserNotFoundException, IncorrectPasswordException{
+        return userDao.authenticate(user.getUsername(), user.getPassword());
+    }
+
     public void createUser(User user){
         System.out.println("in method");
         userDao.createUser(user);
     }
+
+
 }

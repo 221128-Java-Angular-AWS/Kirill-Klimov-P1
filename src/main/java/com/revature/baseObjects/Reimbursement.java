@@ -28,6 +28,9 @@ public class Reimbursement {
         this.userId = userId;
     }
 
+    public Reimbursement(Boolean approved){
+        this.approved = approved;
+    }
     public Integer getTaskId() {
         return taskId;
     }

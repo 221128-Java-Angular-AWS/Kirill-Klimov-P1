@@ -25,4 +25,14 @@
         <url-pattern>/users</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>pingServlet</servlet-name>
+        <servlet-class>com.revature.servlet.PingServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>pingServlet</servlet-name>
+        <url-pattern>/ping</url-pattern>
+    </servlet-mapping>
+
 </web-app>

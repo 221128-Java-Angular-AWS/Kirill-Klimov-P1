@@ -73,22 +73,47 @@ public class UserDao {
 
     public Set<User> getAllUsers(){
         String sql = "SELECT * FROM users";
+        Set<User> setUsers = new HashSet<>();
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql);
             ResultSet rs = pstmt.executeQuery();
-            Set<User> setUsers = new HashSet<>();
+
             while (rs.next()){
                 User user = new User(rs.getInt("user_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("username"),
                         rs.getString("password"), rs.getString("title"));
                 setUsers.add(user);
             }
-            return setUsers;
+
         }catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return setUsers;
     }
-    public void delete(User user){
+
+    public User authenticate(String username, String password) throws UserNotFoundException, IncorrectPasswordException {
+        try{
+            String sql = "SELECT * FROM users WHERE username = ?";
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+
+            if(!rs.next()){
+                throw new UserNotFoundException("This username does not exist in our database");
+            }
+
+            User user = new User(rs.getInt("user_id"), rs.getString("first_name"), rs.getString("last_name"),
+                    rs.getString("username"), rs.getString("password"), rs.getString("title"));
+
+            if(user.getPassword().equals(password)) {
+                return user;
+            }
+
+            // password incoirrext excenptionthrow new
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+    public void deleteUser(User user){
         String sql = "DELETE FROM users WHERE USER_ID = ?";
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql);

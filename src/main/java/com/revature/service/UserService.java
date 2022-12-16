@@ -11,6 +11,7 @@ public class UserService {
     public void registerNewUser(User user) {
         //logging, val.,
         userDao.create(user);
+
     }
 
     public Set<User> getAllUsers(){

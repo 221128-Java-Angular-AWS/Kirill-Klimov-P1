@@ -1,5 +1,6 @@
 package com.revature.service;
 import com.revature.exceptions.*;
+import com.revature.persistence.ReimbursementDao;
 import com.revature.persistence.UserDao;
 import com.revature.baseObjects.User;
 import java.util.Set;
@@ -14,8 +15,13 @@ public class UserService {
         userDao.createUser(user);
     }
 
+
     public Set<User> getAllUsers(){
         return userDao.getAllUsers();
+    }
+
+    public Integer getUserId(String username){
+        return 5;
     }
 
     public User authenticateUser(String username, String password) throws UserNotFoundException, IncorrectPasswordException{

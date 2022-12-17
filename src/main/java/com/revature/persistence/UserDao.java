@@ -89,6 +89,21 @@ public class UserDao {
         return null;
     }
 
+    public User getUserWithUsername(String username) {
+        String sql = "Select * FROM users WHERE username  = ?;";
+        //User user = new User();
+        try{
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            //System.out.println("oooOOOOoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo");
+            User user = new User(rs.getInt("user_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("username"),
+                        rs.getString("password"), rs.getString("title"));
+            return user;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     public void delete(User user){
         String sql = "DELETE FROM users WHERE USER_ID = ?";
         try {

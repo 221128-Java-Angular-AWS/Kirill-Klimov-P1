@@ -2,8 +2,8 @@ package com.revature.javalin;
 import com.revature.baseObjects.User;
 import com.revature.persistence.UserDao;
 import com.revature.persistence.ReimbursementDao;
-import com.revature.service.UserService;
 import io.javalin.Javalin;
+import com.revature.service.*;
 import com.revature.exceptions.UserNotFoundException;
 import io.javalin.http.Context;
 import com.revature.exceptions.IncorrectPasswordException;
@@ -38,11 +38,13 @@ public class JavalinApp {
         app.get("/ping", JavalinApp::ping);
         app.post("/createUser", JavalinApp::postNewUser);
         app.get("/getAllUsers", JavalinApp::getAllUsers);
+        app.post("/addTicket", JavalinApp::addReimbursement);
         app.post("/user/auth", JavalinApp::login);
         app.get("/redirect",  JavalinApp:: redirectEx1);
         app.post("/addCk", JavalinApp::addCookies);
         app.get("/logout", JavalinApp::logout);
         app.post("/getCk", JavalinApp::getCookies);
+        app.get("/viewMyTickets", JavalinApp::getReimbursements);
     }
 
     public static void ping(Context ctx){
@@ -103,11 +105,46 @@ public class JavalinApp {
         }
     }
 
+    public static void addReimbursement(Context ctx) {
+        Map<String, String> cookieMap = ctx.cookieMap();
+        if (cookieMap.isEmpty() || cookieMap.containsValue("Manager")){
+            ctx.result("You must be signed in as an Employee to use this feature");
+            ctx.status(401);
+        }else if (cookieMap.containsValue("Employee")){
+            String username = cookieMap.keySet().iterator().next();
+            //Reimbursement reimbursement = ctx.bodyAsClass(Reimbursement.class);
+            String title = ctx.queryParam("title");
+            String description = ctx.queryParam("description");
+            ctx.result(username+" "+title+description);
+            Reimbursement reimbursement = ctx.bodyAsClass(Reimbursement.class);
+            reimbursementService.createReimbursement(reimbursement);
+            ctx.status(200);
+        }else {
+            ctx.result("This user is not recognized as an Employee or Manager");
+            ctx.status(400);
+        }
+    }
 
+    public static void getReimbursements(Context ctx) {
+        Map<String, String> cookieMap = ctx.cookieMap();
+        if (cookieMap.isEmpty() || cookieMap.containsValue("Manager")){
+            ctx.result("You must be signed in as an Employee to use this feature");
+            ctx.status(401);
+        }else if (cookieMap.containsValue("Employee")){
+            String username = cookieMap.keySet().iterator().next();
+            Set<Reimbursement> myReimbursements= reimbursementService.getAllReimbursementsForAUser(username);
+            ctx.json(myReimbursements);
+            ctx.status(200);
+        }
+        else {
+            ctx.result("This user is not recognized as an Employee or Manager");
+            ctx.status(400);
+        }
+    }
     public static void login(Context ctx) {
 
         if (!ctx.cookieMap().isEmpty()) {
-            ctx.result("You are logged in already. Please log out before proceeding");
+            ctx.result("You are logged in already. Please logout before proceeding");
             ctx.status(401);
         } else {
             String username = ctx.queryParam("username");
@@ -117,11 +154,11 @@ public class JavalinApp {
                 User user = userService.authenticateUser(username, password);
                 //ctx.result(user.getPassword()+"  username: "+ user.getUsername());
                 String loginUsername = user.getUsername();
-                String loginPassword = user.getPassword();
-                Cookie cookieUser = new Cookie(loginUsername, loginPassword);
+                String title = user.getTitle();
+                Cookie cookieUser = new Cookie(loginUsername, title);
                 cookieUser.setMaxAge(9000000);
                 ctx.cookie(cookieUser);
-                ctx.result(loginUsername + loginPassword);
+                ctx.result(loginUsername + title);
                 ctx.status(201);
             } catch (IncorrectPasswordException e) {
                 ctx.status(401);

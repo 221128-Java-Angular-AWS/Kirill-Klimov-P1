@@ -2,8 +2,8 @@ package com.revature.persistence;
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.revature.baseObjects.Reimbursement;
+import com.revature.baseObjects.*;
+import com.revature.persistence.UserDao;
 import com.revature.exceptions.IncorrectPasswordException;
 import com.revature.exceptions.UserNotFoundException;
 public class ReimbursementDao {
@@ -14,14 +14,16 @@ public class ReimbursementDao {
     }
 
     public void create(Reimbursement reimbursement){
-        String sql = "INSERT INTO reimbursements (title, approved, description, user_id) VALUES (?,?,?,?)";
-
+        //UserDao userDao = new UserDao();
+        //User user = userDao.getUserWithUsername(username);
+        //Reimbursement reimbursement = new Reimbursement(title, description, username);
+        String sql = "INSERT INTO reimbursements (title, description, user_id) VALUES (?,?,?)";
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, reimbursement.getTitle());
-            pstmt.setString(2, reimbursement.getApproved().toString());
+            //pstmt.setString(2, reimbursement.getApproved().toString());
             pstmt.setString(3, reimbursement.getDescription());
-            pstmt.setInt(4, reimbursement.getUserId());
+            pstmt.setString(4, reimbursement.getUsername());
             pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();
             if(rs.next()){
@@ -41,7 +43,7 @@ public class ReimbursementDao {
 
             while(rs.next()){
                 Reimbursement reimbursement = new Reimbursement(rs.getInt("task_id"),
-                        rs.getString("title"), rs.getBoolean("approved"), rs.getString("description"), rs.getInt("user_id"));
+                        rs.getString("title"), rs.getString("description"), rs.getString("username"));
                 reimbursements.add(reimbursement);
             }
 
@@ -51,17 +53,17 @@ public class ReimbursementDao {
         return reimbursements;
     }
 
-    public Set<Reimbursement> getAllReimbursementsForAUser(Integer userId){
+    public Set<Reimbursement> getAllReimbursementsForAUser(String username){
         Set<Reimbursement> reimbursements= new HashSet<>();
-        String sql = "SELECT * FROM reimbursements WHERE user_id = ?";
+        String sql = "SELECT * FROM reimbursements WHERE username = ?";
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql);
-            pstmt.setInt(1, userId);
+            pstmt.setString(1, username);
 
             ResultSet rs = pstmt.executeQuery();
             while(rs.next()){
-                Reimbursement reimbursement = new Reimbursement(rs.getInt("task_id"), rs.getString("title"), rs.getBoolean("approved"),
-                        rs.getString("description"), rs.getInt("user_id"));
+                Reimbursement reimbursement = new Reimbursement(rs.getInt("task_id"), rs.getString("title"),
+                        rs.getString("description"), rs.getString("username"));
                 reimbursements.add(reimbursement);
             }
 
@@ -82,9 +84,9 @@ public class ReimbursementDao {
                 Reimbursement reimbursement = new Reimbursement(
                         rs.getInt("task_id"),
                         rs.getString("title"),
-                        rs.getBoolean("approved"),
+
                         rs.getString("description"),
-                        rs.getInt("user_id"));
+                        rs.getString("username"));
                 reimbursements.add(reimbursement);
             }
 

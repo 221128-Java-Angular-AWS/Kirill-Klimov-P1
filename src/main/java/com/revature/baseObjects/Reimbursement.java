@@ -6,26 +6,27 @@ import java.util.Objects;
 public class Reimbursement {
     private Integer taskId;
     private String title;
-    private Boolean approved;
+    private Boolean approved = false;
     private String description;
-    private Integer userId;
+    private String username;
 
     public Reimbursement() {
     }
 
-    public Reimbursement(Integer taskId, String title, Boolean approved, String description, Integer userId) {
+    public Reimbursement(Integer taskId, String title, String description, String username) {
         this.taskId = taskId;
-        this.approved = approved;
+        //this.approved = approved;
         this.description = description;
         this.title = title;
-        this.userId = userId;
+        this.username = username;
     }
 
-    public Reimbursement(String title, Boolean approved, String description,  Integer userId) {
-        this.approved = approved;
+    public Reimbursement(String title, String description,  String username) {
+        //this.approved = approved;
         this.description = description;
         this.title = title;
-        this.userId = userId;
+        this.username = username;
+        //this.userId = userId;
     }
 
     public Reimbursement(Boolean approved){
@@ -63,12 +64,12 @@ public class Reimbursement {
         this.title = title;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserId(Integer user_id) {
-        this.userId = user_id;
+    public void setUserId(String username) {
+        this.username = username;
     }
 
 
@@ -78,11 +79,11 @@ public class Reimbursement {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Reimbursement reimbursement = (Reimbursement) o;
-        return Objects.equals(taskId, reimbursement.taskId) && Objects.equals(approved, reimbursement.approved) && Objects.equals(description, reimbursement.description) && Objects.equals(title, reimbursement.title) && Objects.equals(userId, reimbursement.userId);
+        return Objects.equals(taskId, reimbursement.taskId) && Objects.equals(approved, reimbursement.approved) && Objects.equals(description, reimbursement.description) && Objects.equals(title, reimbursement.title) && Objects.equals(username, reimbursement.username);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(taskId, approved, description, title, userId);
+        return Objects.hash(taskId, approved, description, title, username);
     }
 }

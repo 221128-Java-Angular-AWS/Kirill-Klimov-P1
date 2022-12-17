@@ -41,6 +41,7 @@ public class JavalinApp {
         app.post("/user/auth", JavalinApp::login);
         app.get("/redirect",  JavalinApp:: redirectEx1);
         app.post("/addCk", JavalinApp::addCookies);
+        app.get("/logout", JavalinApp::logout);
         app.post("/getCk", JavalinApp::getCookies);
     }
 
@@ -60,7 +61,7 @@ public class JavalinApp {
         ctx.result(cookiemap.toString());
     }
     public static void addCookies(Context ctx){
-        //ctx.cookieStore("sd", "sdf");
+
         //ctx.cookie("ask", "new", 500000);
         Cookie cookie0 = new Cookie("ve","blue");
         cookie0.setMaxAge(9000000);
@@ -68,42 +69,83 @@ public class JavalinApp {
         ctx.result(ctx.cookieMap().toString());
     }
     public static void postNewUser(Context ctx){
-        User user = ctx.bodyAsClass(User.class);
-        userService.registerNewUser(user);
-        ctx.status(201);
+        Map<String, String> cookieMap = ctx.cookieMap();
+        if (ctx.cookieMap().isEmpty() || ctx.cookieMap().containsValue("Employee")){
+            ctx.result("You need to log in as a manager to create a user!");
+            ctx.status(401);
+        }
+        else if (cookieMap.containsValue("Manager")){
+            User user = ctx.bodyAsClass(User.class);
+            userService.registerNewUser(user);
+            ctx.status(201);
+        }
+        else {
+            ctx.result("This user is not recognized as an Employee or Manager");
+            ctx.status(400);
+        }
+
     }
 
     public static void getAllUsers(Context ctx){
         Map<String, String> cookieMap = ctx.cookieMap();
-        if (cookieMap.values(0)=="Manager"){
-
+        if (ctx.cookieMap().isEmpty() || ctx.cookieMap().containsValue("Employee")){
+            ctx.result("You need to log in as a manager to see the request.");
+            ctx.status(401);
         }
-        Set<User> users = userService.getAllUsers();
-        ctx.json(users);
-        ctx.status(200);
+        else if (cookieMap.containsValue("Manager")){
+            Set<User> users = userService.getAllUsers();
+            ctx.json(users);
+            ctx.status(200);
+        }
+        else {
+            ctx.result("This user is not recognized as an Employee or Manager");
+            ctx.status(400);
+        }
     }
 
-    public static void login(Context ctx){
 
-        if(!ctx.cookieMap().isEmpty()){
+    public static void login(Context ctx) {
+
+        if (!ctx.cookieMap().isEmpty()) {
             ctx.result("You are logged in already. Please log out before proceeding");
             ctx.status(401);
         } else {
             String username = ctx.queryParam("username");
             String password = ctx.queryParam("password");
 
-            try{
+            try {
                 User user = userService.authenticateUser(username, password);
-                Cookie cookieUsername = new Cookie(user.getUsername(), user.getTitle());
-                ctx.cookie(cookieUsername);
+                //ctx.result(user.getPassword()+"  username: "+ user.getUsername());
+                String loginUsername = user.getUsername();
+                String loginPassword = user.getPassword();
+                Cookie cookieUser = new Cookie(loginUsername, loginPassword);
+                cookieUser.setMaxAge(9000000);
+                ctx.cookie(cookieUser);
+                ctx.result(loginUsername + loginPassword);
+                ctx.status(201);
             } catch (IncorrectPasswordException e) {
                 ctx.status(401);
                 ctx.result("User not found!");
-            } catch (UserNotFoundException e)  {
+            } catch (UserNotFoundException e) {
                 ctx.status(401);
                 ctx.result("User was not found in database.");
-                }
             }
+        }
+    }
+
+    public static void logout(Context ctx) {
+        if(ctx.cookieMap().isEmpty()){
+            ctx.result("You are not logged in atm");
+            ctx.status(200);
+        } else{
+            Map<String, String> cookieMap = ctx.cookieMap();
+            for(String key: cookieMap.keySet()){
+                ctx.removeCookie(key);
+                ctx.result(cookieMap.toString());
+                ctx.status(200);
+            }
+        }
+    }
     /*
     public static void getTaskById(Context ctx) {
         int id = Integer.parseInt(ctx.queryParam("task_id"));
@@ -113,7 +155,7 @@ public class JavalinApp {
         ctx.status(200);
     }
      */
-        }
+
 
 }
 

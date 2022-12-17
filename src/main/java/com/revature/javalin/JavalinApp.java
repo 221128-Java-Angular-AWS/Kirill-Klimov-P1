@@ -38,7 +38,7 @@ public class JavalinApp {
         app.get("/ping", JavalinApp::ping);
         app.post("/createUser", JavalinApp::postNewUser);
         app.get("/getAllUsers", JavalinApp::getAllUsers);
-        app.post("/user/auth", JavalinApp::authenticateUser);
+        app.post("/user/auth", JavalinApp::login);
         app.get("/redirect",  JavalinApp:: redirectEx1);
         app.post("/addCk", JavalinApp::addCookies);
         app.post("/getCk", JavalinApp::getCookies);
@@ -74,22 +74,36 @@ public class JavalinApp {
     }
 
     public static void getAllUsers(Context ctx){
+        Map<String, String> cookieMap = ctx.cookieMap();
+        if (cookieMap.values(0)=="Manager"){
+
+        }
         Set<User> users = userService.getAllUsers();
         ctx.json(users);
         ctx.status(200);
     }
 
-    public static void authenticateUser(Context ctx){
-        User auth = ctx.bodyAsClass(User.class);
+    public static void login(Context ctx){
 
-        try{
-            userService.authenticateUser(auth);
-        } catch (IncorrectPasswordException e) {ctx.status(401); ctx.result("User not found!");
-        } catch (UserNotFoundException e)  {
+        if(!ctx.cookieMap().isEmpty()){
+            ctx.result("You are logged in already. Please log out before proceeding");
             ctx.status(401);
-            ctx.result("User was not found in database.");
-        }
-    }
+        } else {
+            String username = ctx.queryParam("username");
+            String password = ctx.queryParam("password");
+
+            try{
+                User user = userService.authenticateUser(username, password);
+                Cookie cookieUsername = new Cookie(user.getUsername(), user.getTitle());
+                ctx.cookie(cookieUsername);
+            } catch (IncorrectPasswordException e) {
+                ctx.status(401);
+                ctx.result("User not found!");
+            } catch (UserNotFoundException e)  {
+                ctx.status(401);
+                ctx.result("User was not found in database.");
+                }
+            }
     /*
     public static void getTaskById(Context ctx) {
         int id = Integer.parseInt(ctx.queryParam("task_id"));
@@ -99,5 +113,7 @@ public class JavalinApp {
         ctx.status(200);
     }
      */
+        }
+
 }
 

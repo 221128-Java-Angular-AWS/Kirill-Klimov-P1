@@ -18,8 +18,8 @@ public class UserService {
         return userDao.getAllUsers();
     }
 
-    public User authenticateUser(User user) throws UserNotFoundException, IncorrectPasswordException{
-        return userDao.authenticate(user.getUsername(), user.getPassword());
+    public User authenticateUser(String username, String password) throws UserNotFoundException, IncorrectPasswordException{
+        return userDao.authenticate(username, password);
     }
 
     public void createUser(User user){

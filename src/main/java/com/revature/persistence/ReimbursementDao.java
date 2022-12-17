@@ -17,13 +17,13 @@ public class ReimbursementDao {
         //UserDao userDao = new UserDao();
         //User user = userDao.getUserWithUsername(username);
         //Reimbursement reimbursement = new Reimbursement(title, description, username);
-        String sql = "INSERT INTO reimbursements (title, description, user_id) VALUES (?,?,?)";
+        String sql = "INSERT INTO reimbursements (title, description, username) VALUES (?,?,?)";
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, reimbursement.getTitle());
             //pstmt.setString(2, reimbursement.getApproved().toString());
-            pstmt.setString(3, reimbursement.getDescription());
-            pstmt.setString(4, reimbursement.getUsername());
+            pstmt.setString(2, reimbursement.getDescription());
+            pstmt.setString(3, reimbursement.getUsername());
             pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();
             if(rs.next()){

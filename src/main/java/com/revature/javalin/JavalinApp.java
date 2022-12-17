@@ -115,8 +115,9 @@ public class JavalinApp {
             //Reimbursement reimbursement = ctx.bodyAsClass(Reimbursement.class);
             String title = ctx.queryParam("title");
             String description = ctx.queryParam("description");
-            ctx.result(username+" "+title+description);
-            Reimbursement reimbursement = ctx.bodyAsClass(Reimbursement.class);
+            Reimbursement reimbursement = new Reimbursement(title, description, username);
+            //ctx.result(reimbursement.getDescription() + reimbursement.getUsername());
+            //Reimbursement reimbursement = ctx.bodyAsClass(Reimbursement.class);
             reimbursementService.createReimbursement(reimbursement);
             ctx.status(200);
         }else {

@@ -4,47 +4,47 @@ package com.revature.baseObjects;
 import java.util.Objects;
 
 public class Reimbursement {
-    private Integer taskId;
-    private String title;
-    private Boolean approved = false;
+    private Integer ticketId;
+    private Double amount;
+    private String approved = "Pending";
     private String description;
     private String username;
 
     public Reimbursement() {
     }
 
-    public Reimbursement(Integer taskId, String title, String description, String username) {
-        this.taskId = taskId;
+    public Reimbursement(Integer ticketId, Double amount, String description, String username) {
+        this.ticketId = ticketId;
         //this.approved = approved;
         this.description = description;
-        this.title = title;
+        this.amount = amount;
         this.username = username;
     }
 
-    public Reimbursement(String title, String description,  String username) {
+    public Reimbursement(Double amount, String description, String username) {
         //this.approved = approved;
         this.description = description;
-        this.title = title;
+        this.amount = amount;
         this.username = username;
         //this.userId = userId;
     }
 
-    public Reimbursement(Boolean approved){
+    /*public Reimbursement(String approved){
         this.approved = approved;
-    }
-    public Integer getTaskId() {
-        return taskId;
-    }
-
-    public void setTaskId(Integer taskId) {
-        this.taskId = taskId;
+    }*/
+    public Integer getTicketId() {
+        return ticketId;
     }
 
-    public Boolean getApproved() {
+    public void setTicketId(Integer ticketId) {
+        this.ticketId = ticketId;
+    }
+
+    public String getApproved() {
         return approved;
     }
 
-    public void setApproved(Boolean approved) {
+    public void setApproved(String approved) {
         this.approved = approved;
     }
 
@@ -56,12 +56,12 @@ public class Reimbursement {
         this.description = description;
     }
 
-    public String getTitle() {
-        return title;
+    public Double getAmount() {
+        return amount;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setAmount(Double amount) {
+        this.amount = amount;
     }
 
     public String getUsername() {
@@ -79,11 +79,11 @@ public class Reimbursement {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Reimbursement reimbursement = (Reimbursement) o;
-        return Objects.equals(taskId, reimbursement.taskId) && Objects.equals(approved, reimbursement.approved) && Objects.equals(description, reimbursement.description) && Objects.equals(title, reimbursement.title) && Objects.equals(username, reimbursement.username);
+        return Objects.equals(ticketId, reimbursement.ticketId) && Objects.equals(approved, reimbursement.approved) && Objects.equals(description, reimbursement.description) && Objects.equals(amount, reimbursement.amount) && Objects.equals(username, reimbursement.username);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(taskId, approved, description, title, username);
+        return Objects.hash(ticketId, approved, description, amount, username);
     }
 }

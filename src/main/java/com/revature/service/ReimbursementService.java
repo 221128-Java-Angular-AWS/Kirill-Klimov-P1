@@ -23,8 +23,8 @@ public class ReimbursementService {
         return reimbursementDao.getAllReimbursementsForAUser(username);
     }
 
-    public Set<Reimbursement> getReimbursementsFilterByApproval(Reimbursement reimbursement){
-        return reimbursementDao.filterByApproval(reimbursement.getApproved());
+    public Set<Reimbursement> getAllReimbursementsFilterByApproval(String type){
+        return reimbursementDao.filterByApproval(type);
     }
 
 }

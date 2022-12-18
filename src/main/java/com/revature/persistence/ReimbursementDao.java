@@ -3,9 +3,7 @@ import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 import com.revature.baseObjects.*;
-import com.revature.persistence.UserDao;
-import com.revature.exceptions.IncorrectPasswordException;
-import com.revature.exceptions.UserNotFoundException;
+
 public class ReimbursementDao {
     private Connection connection;
     //taskId, title, approved, description, user_id
@@ -17,17 +15,17 @@ public class ReimbursementDao {
         //UserDao userDao = new UserDao();
         //User user = userDao.getUserWithUsername(username);
         //Reimbursement reimbursement = new Reimbursement(title, description, username);
-        String sql = "INSERT INTO reimbursements (title, description, username) VALUES (?,?,?)";
+        String sql = "BEGIN; INSERT INTO reimbursements (title, description, username) VALUES (?,?,?); COMMIT TRANSACTION;";
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, reimbursement.getTitle());
+            pstmt.setString(1, reimbursement.getAmount());
             //pstmt.setString(2, reimbursement.getApproved().toString());
             pstmt.setString(2, reimbursement.getDescription());
             pstmt.setString(3, reimbursement.getUsername());
             pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();
             if(rs.next()){
-                reimbursement.setTaskId(rs.getInt("task_id"));
+                reimbursement.setTicketId(rs.getInt("task_id"));
             }
         } catch (SQLException e){
             throw new RuntimeException(e);
@@ -72,13 +70,13 @@ public class ReimbursementDao {
         }
         return reimbursements;
     }
-    public Set<Reimbursement> filterByApproval(Boolean approvedType){
+    public Set<Reimbursement> filterByApproval(String approvedType){
         Set<Reimbursement> reimbursements = new HashSet<>();
         String sql = "SELECT * FROM reimbursements " +
                 "WHERE approved = ?";
         try{
             PreparedStatement pstmt = connection.prepareStatement(sql);
-            pstmt.setBoolean(1, approvedType);
+            pstmt.setString(1, approvedType);
             ResultSet rs = pstmt.executeQuery();
             while(rs.next()){
                 Reimbursement reimbursement = new Reimbursement(

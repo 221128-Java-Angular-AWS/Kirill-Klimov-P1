@@ -45,6 +45,7 @@ public class JavalinApp {
         app.get("/redirect",  JavalinApp:: redirectEx1);
         app.post("/addCk", JavalinApp::addCookies);
         app.get("/logout", JavalinApp::logout);
+        app.post("/approve", JavalinApp::approveReimbursement);
         app.post("/getCk", JavalinApp::getCookies);
         app.get("/getAllReimbursements/denied", JavalinApp::getAllDeniedReimbursements);
         //app.get("/getAllReimbursements/pending", JavalinApp::getAllPendingReimbursements);
@@ -171,7 +172,25 @@ public class JavalinApp {
         }
     }
 
+    public static void approveOrDeny(Context ctx) {
+        Map<String, String> cookieMap = ctx.cookieMap();
+        if (cookieMap.isEmpty() || cookieMap.containsValue("Employee")) {
+            ctx.result("You must be signed in as a Manager to use this feature");
+            ctx.status(401);
+        } else if (cookieMap.containsValue("Manager")){
+            String id = ctx.queryParam("ticketId");
+            String response = ctx.queryParam("decision");
 
+            ctx.json(myReimbursements);
+        }else {
+            ctx.result("This user is not recognized as an Employee or Manager");
+            ctx.status(400);
+        }
+    }
+    /*
+    public static void checkLoginCookies(Context ctx, e ,u){
+
+    }*/
     public static void addReimbursement(Context ctx) {
         Map<String, String> cookieMap = ctx.cookieMap();
         if (cookieMap.isEmpty() || cookieMap.containsValue("Manager")){

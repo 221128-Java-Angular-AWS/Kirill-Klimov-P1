@@ -26,6 +26,10 @@ public class ReimbursementService {
     public void addLastInputReimbursement(){
         reimbursementDao.queueRecentlyInputReimbursement();
     }
+    public void approveDeny(Integer ticketId, String decision){
+        Reimbursement reimbursement = reimbursementDao.getReimbursementById(ticketId);
+        reimbursementDao.approveDeny(reimbursement, decision);
+    }
     public ArrayDeque<Reimbursement> getQueueOfReimbursements(){
         return reimbursementDao.getReimbursementQueue();
     }

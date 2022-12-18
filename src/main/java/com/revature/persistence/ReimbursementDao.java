@@ -55,6 +55,28 @@ public class ReimbursementDao {
         return reimbursementQueue;
     }
 
+    public void approveDeny(String ticketId, String decision){
+        if(decision.equals("Approved") || decision.equals("Denied")){
+
+        }
+    }
+
+    public Reimbursement getReimbursementById(Integer ticketId){
+        String sql = "SELECT * FROM reimbursements WHERE reimbursement_id = ?";
+        try{
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next()){
+                Reimbursement reimbursement = new Reimbursement(rs.getInt("reimbursement_id"),
+                        rs.getDouble("amount"), rs.getString("approved"),  rs.getString("description"), rs.getString("username"));
+                return reimbursement;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
     public Set<Reimbursement> getAllReimbursementRequests(){
         String sql = "SELECT * FROM reimbursements";
         Set<Reimbursement> reimbursements = new HashSet<>();

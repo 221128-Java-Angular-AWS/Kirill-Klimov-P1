@@ -19,10 +19,10 @@ public class UserService {
     public Set<User> getAllUsers(){
         return userDao.getAllUsers();
     }
-
+/*
     public Integer getUserId(String username){
         return 5;
-    }
+    }*/
 
     public User authenticateUser(String username, String password) throws UserNotFoundException, IncorrectPasswordException{
         return userDao.authenticate(username, password);

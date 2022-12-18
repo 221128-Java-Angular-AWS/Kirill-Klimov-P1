@@ -14,6 +14,8 @@ import io.javalin.http.Cookie;
 import io.javalin.http.HttpStatus;
 import io.javalin.http.util.CookieStore;
 
+
+import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.Set;
 public class JavalinApp {
@@ -45,8 +47,10 @@ public class JavalinApp {
         app.get("/logout", JavalinApp::logout);
         app.post("/getCk", JavalinApp::getCookies);
         app.get("/getAllReimbursements/denied", JavalinApp::getAllDeniedReimbursements);
-        app.get("/getAllReimbursements/pending", JavalinApp::getAllPendingReimbursements);
+        //app.get("/getAllReimbursements/pending", JavalinApp::getAllPendingReimbursements);
+        app.get("/getAllReimbursements/pending", JavalinApp::getPendingReimbursements);
         app.get("/getAllReimbursements", JavalinApp::getAllReimbursements);
+        //app.get("/getIncompleteReimbursements", JavalinApp::getPendingReimbursements);
         app.get("/getAllReimbursements/approved", JavalinApp::getAllApprovedReimbursements);
         app.get("/viewMyTickets", JavalinApp::getReimbursements);
     }
@@ -181,10 +185,23 @@ public class JavalinApp {
             Reimbursement reimbursement = new Reimbursement(amount, description, username);
             //ctx.result(reimbursement.getDescription() + reimbursement.getUsername() + username);
             reimbursementService.createReimbursement(reimbursement);
+            reimbursementService.addLastInputReimbursement();
             ctx.status(200);
         }else {
             ctx.result("This user is not recognized as an Employee or Manager");
             ctx.status(400);
+        }
+    }
+
+    public static void getPendingReimbursements(Context ctx) {
+        Map<String, String> cookieMap = ctx.cookieMap();
+        if (cookieMap.isEmpty() || cookieMap.containsValue("Employee")){
+            ctx.result("You must be signed in as a Manager to use this feature");
+            ctx.status(401);
+        }else if (cookieMap.containsValue("Manager")) {
+            ArrayDeque<Reimbursement> arrayReimbursements= reimbursementService.getQueueOfReimbursements();
+            ctx.json(arrayReimbursements);
+            ctx.status(201);
         }
     }
 

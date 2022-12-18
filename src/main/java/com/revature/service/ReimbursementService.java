@@ -1,7 +1,8 @@
 package com.revature.service;
 import com.revature.baseObjects.Reimbursement;
 import com.revature.persistence.UserDao;
-import com.revature.baseObjects.User;
+
+import java.util.ArrayDeque;
 import java.util.Set;
 import com.revature.persistence.ReimbursementDao;
 
@@ -22,7 +23,12 @@ public class ReimbursementService {
     public Set<Reimbursement> getAllReimbursementsForAUser(String username){
         return reimbursementDao.getAllReimbursementsForAUser(username);
     }
-
+    public void addLastInputReimbursement(){
+        reimbursementDao.queueRecentlyInputReimbursement();
+    }
+    public ArrayDeque<Reimbursement> getQueueOfReimbursements(){
+        return reimbursementDao.getReimbursementQueue();
+    }
     public Set<Reimbursement> getAllReimbursementsFilterByApproval(String type){
         return reimbursementDao.filterByApproval(type);
     }

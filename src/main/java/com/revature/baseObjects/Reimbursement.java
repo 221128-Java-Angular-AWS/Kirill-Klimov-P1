@@ -13,7 +13,7 @@ public class Reimbursement {
     public Reimbursement() {
     }
 
-    public Reimbursement(Integer ticketId, Double amount, String description, String username) {
+    public Reimbursement(Integer ticketId, Double amount, String approved, String description, String username) {
         this.ticketId = ticketId;
         //this.approved = approved;
         this.description = description;

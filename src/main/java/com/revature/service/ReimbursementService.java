@@ -30,8 +30,13 @@ public class ReimbursementService {
         Reimbursement reimbursement = reimbursementDao.getReimbursementById(ticketId);
         reimbursementDao.approveDeny(reimbursement, decision);
     }
+
     public ArrayDeque<Reimbursement> getQueueOfReimbursements(){
         return reimbursementDao.getReimbursementQueue();
+    }
+
+    public void initializeArrayDeque(){
+        reimbursementDao.initializeArrayDeque();
     }
     public Set<Reimbursement> getAllReimbursementsFilterByApproval(String type){
         return reimbursementDao.filterByApproval(type);

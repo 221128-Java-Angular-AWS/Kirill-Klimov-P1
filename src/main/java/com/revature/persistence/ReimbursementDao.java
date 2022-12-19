@@ -67,7 +67,7 @@ public class ReimbursementDao {
     }
 
     public void approveDeny(Reimbursement reimbursement, String decision){
-        String sql = "update reimbursements set approved = ? where reimbursement_id = ?";
+        String sql = "update reimbursements set approved = ? where reimbursement_id = ? and approved = 'Pending'";
         if(decision.equals("Approved") || decision.equals("Denied")){
             reimbursementQueue.removeFirstOccurrence(reimbursement);
             try{

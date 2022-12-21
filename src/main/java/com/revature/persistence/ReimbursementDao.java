@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 import com.revature.baseObjects.*;
 import java.util.ArrayDeque;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 public class ReimbursementDao {
     private ArrayDeque<Reimbursement> reimbursementQueue;
@@ -18,6 +20,8 @@ public class ReimbursementDao {
         //UserDao userDao = new UserDao();
         //User user = userDao.getUserWithUsername(username);
         //Reimbursement reimbursement = new Reimbursement(title, description, username);
+        Instant instant = Instant.now();
+        Timestamp sqlTime = Timestamp.from(instant);
         String sql = "BEGIN; INSERT INTO reimbursements (amount, description, username) VALUES (?,?,?); COMMIT TRANSACTION;";
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);

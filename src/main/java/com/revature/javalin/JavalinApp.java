@@ -1,5 +1,7 @@
 package com.revature.javalin;
+import com.revature.baseObjects.Log;
 import com.revature.baseObjects.User;
+import com.revature.persistence.LogDao;
 import com.revature.persistence.UserDao;
 import com.revature.persistence.ReimbursementDao;
 import io.javalin.Javalin;
@@ -21,13 +23,16 @@ import java.util.Set;
 public class JavalinApp {
     private static Javalin app;
     private static UserService userService;
+    private static LogService logService;
     private static ReimbursementService reimbursementService;
+
 
     private JavalinApp() {
     }
 
     public static Javalin getApp(int port) {
         if(app == null){
+            logService = new LogService((new LogDao()));
             userService = new UserService(new UserDao());
             reimbursementService = new ReimbursementService(new ReimbursementDao());
             reimbursementService.initializeArrayDeque();
@@ -214,9 +219,13 @@ public class JavalinApp {
             Double amount = Double.valueOf(ctx.queryParam("amount"));
             String description = ctx.queryParam("description");
             Reimbursement reimbursement = new Reimbursement(amount, description, username);
+            ctx.json(reimbursement);
             //ctx.result(reimbursement.getDescription() + reimbursement.getUsername() + username);
+
             reimbursementService.createReimbursement(reimbursement);
             reimbursementService.addLastInputReimbursement();
+            Log log = new Log(username, "Added a ticket");
+            logService.addLog(log);
             ctx.status(200);
         }else {
             ctx.result("This user is not recognized as an Employee or Manager");

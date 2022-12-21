@@ -1,6 +1,5 @@
 package com.revature.baseObjects;
 
-
 import java.util.Objects;
 
 public class Reimbursement {
@@ -23,6 +22,7 @@ public class Reimbursement {
 
     public Reimbursement(Double amount, String description, String username) {
         //this.approved = approved;
+
         this.description = description;
         this.amount = amount;
         this.username = username;

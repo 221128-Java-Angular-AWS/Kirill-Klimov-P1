@@ -62,14 +62,14 @@ public class UserDao {
 
     }
     public void update(User user){
-        String sql = "UPDATE USERS SET first_name = ?, last_name = ?, password = ?, title = ? WHERE username = ?;";
+        String sql = "UPDATE users SET first_name = ?, last_name = ?, password = ?, title = ? WHERE username = ?;";
         try {
-            PreparedStatement pstmt = connection.prepareStatement(sql);
+            PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, user.getFirstName());
             pstmt.setString(2, user.getLastName());
             pstmt.setString(3, user.getPassword());
-            pstmt.setString(4, user.getUsername());
-            pstmt.setString(5, user.getTitle());
+            pstmt.setString(4, user.getTitle());
+            pstmt.setString(5, user.getUsername());
             pstmt.executeUpdate();
         }catch (SQLException e){
             throw new RuntimeException();

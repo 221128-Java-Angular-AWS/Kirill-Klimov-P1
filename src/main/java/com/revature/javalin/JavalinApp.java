@@ -111,22 +111,19 @@ public class JavalinApp {
         Map<String, String> cookieMap = ctx.cookieMap();
         if (checkPermission(ctx, "Manager")){
             String newRole = ctx.queryParam("newRole");
-            if(newRole.equals("Manager") || newRole.equals("Employee")) {
+            //if(newRole.equals("Manager") || newRole.equals("Employee")) {
                 String username = ctx.queryParam("username");
                 User user = userService.getUserWithUsername(username);
                 user.setTitle(newRole);
                 userService.updateUser(user);
                 ctx.status(200);
-            }else{
-                ctx.result("Something went wrong in your request");
-                ctx.status(404);
-            }
+            //}else{
+            //    ctx.result("You must specify either Manager or Employee as update.");
+            //    ctx.status(404);
+           // }
         }
     }
-    /*
-    public static void updateMyAccount(Context ctx){
 
-    }*/
     public static void getAllUsers(Context ctx){
         if (checkPermission(ctx, "Manager")) {
             Set<User> users = userService.getAllUsers();
@@ -200,7 +197,7 @@ public class JavalinApp {
             reimbursementService.addLastInputReimbursement();
             Log log = new Log(username, "Added a ticket");
             logService.addLog(log);
-            ctx.status(200);
+            ctx.status(201);
         }
     }
 
@@ -208,7 +205,7 @@ public class JavalinApp {
         if (checkPermission(ctx, "Manager")){
             ArrayDeque<Reimbursement> arrayReimbursements= reimbursementService.getQueueOfReimbursements();
             ctx.json(arrayReimbursements);
-            ctx.status(201);
+            ctx.status(200);
         }
     }
 
@@ -234,14 +231,14 @@ public class JavalinApp {
         if (checkPermission(ctx, "Employee")) {
             String username = cookieMap.keySet().iterator().next();
             ctx.json(logService.getMyLogs(username));
-            ctx.status(201);
+            ctx.status(200);
         }
     }
     public static void login(Context ctx) {
 
         if (!ctx.cookieMap().isEmpty()) {
             ctx.result("You are logged in already. Please logout before proceeding");
-            ctx.status(401);
+            ctx.status(400);
         } else {
             String username = ctx.queryParam("username");
             String password = ctx.queryParam("password");
@@ -269,7 +266,7 @@ public class JavalinApp {
     public static void logout(Context ctx) {
         if(ctx.cookieMap().isEmpty()){
             ctx.result("You are not logged in at the moment");
-            ctx.status(200);
+            ctx.status(400);
         } else{
             Map<String, String> cookieMap = ctx.cookieMap();
             for(String key: cookieMap.keySet()){

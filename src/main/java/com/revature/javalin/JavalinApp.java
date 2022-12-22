@@ -47,12 +47,13 @@ public class JavalinApp {
         app.post("/login", JavalinApp::login);
         app.get("/logout", JavalinApp::logout);
         app.patch("/reimbursement/approveDeny", JavalinApp::approveOrDeny);
-        app.post("/cookies", JavalinApp::getCookies);
+        app.get("/cookies", JavalinApp::getCookies);
         app.get("/reimbursement/denied", JavalinApp::getAllDeniedReimbursements);
         app.get("/reimbursement/pending", JavalinApp::getPendingReimbursements);
         app.get("/reimbursement/queue", JavalinApp::printQueue);
         app.get("/reimbursement", JavalinApp::getAllReimbursements);
         app.get("/reimbursement/approved", JavalinApp::getAllApprovedReimbursements);
+        app.get("/logs", JavalinApp::viewLogs);
         app.get("/user/reimbursements", JavalinApp::getMyReimbursements);
     }
 
@@ -201,6 +202,15 @@ public class JavalinApp {
         else {
             ctx.result("This user is not recognized as an Employee or Manager");
             ctx.status(400);
+        }
+    }
+
+    public static void viewLogs(Context ctx){
+        Map<String, String> cookieMap = ctx.cookieMap();
+        if (checkPermission(ctx, "Employee")) {
+            String username = cookieMap.keySet().iterator().next();
+            ctx.json(logService.getMyLogs(username));
+            ctx.status(201);
         }
     }
     public static void login(Context ctx) {

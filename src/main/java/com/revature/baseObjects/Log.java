@@ -10,6 +10,13 @@ public class Log {
     private Timestamp dateTime;
 
     public Log() {};
+
+    public Log(Integer logId, Timestamp dateTime, String username,String event){
+        this.logId = logId;
+        this.username = username;
+        this.event = event;
+        this.dateTime = dateTime;
+    }
     public Log(String username, String event){
         //this.logId = logId;
         this.username = username;

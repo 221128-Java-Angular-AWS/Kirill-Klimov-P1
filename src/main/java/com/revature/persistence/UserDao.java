@@ -15,7 +15,7 @@ public class UserDao {
     }
 
     public void createUser(User user){
-        String sql = "INSERT INTO users (first_name, last_name, username, password) VALUES (?,?,?,?)";
+        String sql = "INSERT INTO users (first_name, last_name, username, password, title) VALUES (?,?,?,?, ?)";
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             String encryptedPassword = User.getEncryptedPassword(user.getPassword());
@@ -23,6 +23,7 @@ public class UserDao {
             pstmt.setString(2, user.getLastName());
             pstmt.setString(3, user.getUsername());
             pstmt.setString(4, encryptedPassword);
+            pstmt.setString(5, user.getTitle());
 
             pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();

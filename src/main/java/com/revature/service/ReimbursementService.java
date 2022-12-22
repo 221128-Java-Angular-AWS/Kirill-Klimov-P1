@@ -28,7 +28,7 @@ public class ReimbursementService {
     }
     public void approveDeny(Integer ticketId, String decision){
         Reimbursement reimbursement = reimbursementDao.getReimbursementById(ticketId);
-        reimbursementDao.approveDeny(reimbursement, decision);
+        reimbursementDao.approveOrDeny(reimbursement, decision);
     }
 
     public ArrayDeque<Reimbursement> getQueueOfReimbursements(){

@@ -44,25 +44,24 @@ public class JavalinApp {
 
     private static void init(int port) {
         app = Javalin.create().start(port);
-        //app.get("/ping", JavalinApp::ping);
-        app.post("/createUser", JavalinApp::postNewUser);
-        app.get("/getAllUsers", JavalinApp::getAllUsers);
-        app.post("/addTicket", JavalinApp::addReimbursement);
+        app.get("/ping", JavalinApp::ping);
+        app.post("/users/user", JavalinApp::postNewUser);
+        app.get("/users", JavalinApp::getAllUsers);
+        app.post("/reimbursement", JavalinApp::addReimbursement);
         app.post("/login", JavalinApp::login);
         //app.get("/redirect",  JavalinApp:: redirectEx1);
         //app.post("/addCk", JavalinApp::addCookies);
         app.get("/logout", JavalinApp::logout);
-        app.post("/makeNewUser", JavalinApp::postNewUser);
-        app.post("/approveDeny", JavalinApp::approveOrDeny);
+        app.patch("/reimbursement/approveDeny", JavalinApp::approveOrDeny);
         //app.post("/getCk", JavalinApp::getCookies);
-        app.get("/getAllReimbursements/denied", JavalinApp::getAllDeniedReimbursements);
+        app.get("/reimbursement/denied", JavalinApp::getAllDeniedReimbursements);
         //app.get("/getAllReimbursements/pending", JavalinApp::getAllPendingReimbursements);
-        app.get("/getAllReimbursements/pending", JavalinApp::getPendingReimbursements);
-        app.get("/viewReimbursementPendingQueue", JavalinApp::printQueue);
-        app.get("/getAllReimbursements", JavalinApp::getAllReimbursements);
+        app.get("/reimbursement/pending", JavalinApp::getPendingReimbursements);
+        app.get("/reimbursement/queue", JavalinApp::printQueue);
+        app.get("/reimbursement", JavalinApp::getAllReimbursements);
         //app.get("/getIncompleteReimbursements", JavalinApp::getPendingReimbursements);
-        app.get("/getAllReimbursements/approved", JavalinApp::getAllApprovedReimbursements);
-        app.get("/login/viewMyTickets", JavalinApp::getReimbursements);
+        app.get("/reimbursement/approved", JavalinApp::getAllApprovedReimbursements);
+        app.get("/user/reimbursements", JavalinApp::getMyReimbursements);
     }
 
     public static boolean checkPermission(Context ctx, String userAccessor){
@@ -76,14 +75,14 @@ public class JavalinApp {
             return false;
         }
     }
-
-    /*
     public static void ping(Context ctx){
 
         ctx.result("pong!!");
         ctx.removeCookie("ve");
         ctx.status(200);
     }
+    /*
+
 
     public static void redirectEx1(Context ctx){
         ctx.redirect("/redirectNew", HttpStatus.ACCEPTED);
@@ -146,11 +145,11 @@ public class JavalinApp {
 
     public static void getAllUsers(Context ctx){
         //Map<String, String> cookieMap = ctx.cookieMap();
-        if (checkPermission(ctx, "Manager")){
+        //if (checkPermission(ctx, "Manager")){
             Set<User> users = userService.getAllUsers();
             ctx.json(users);
             ctx.status(200);
-        }
+        //}
     }
 
     public static void getAllReimbursements(Context ctx) {
@@ -242,7 +241,7 @@ public class JavalinApp {
         }
     }
 
-    public static void getReimbursements(Context ctx) {
+    public static void getMyReimbursements(Context ctx) {
         Map<String, String> cookieMap = ctx.cookieMap();
         if (cookieMap.isEmpty() || cookieMap.containsValue("Manager")){
             ctx.result("You must be signed in as an Employee to use this feature");

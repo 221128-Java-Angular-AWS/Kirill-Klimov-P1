@@ -70,7 +70,7 @@ public class ReimbursementDao {
         return reimbursementQueue;
     }
 
-    public void approveDeny(Reimbursement reimbursement, String decision){
+    public void approveOrDeny(Reimbursement reimbursement, String decision){
         String sql = "update reimbursements set approved = ? where reimbursement_id = ? and approved = 'Pending'";
         if(decision.equals("Approved") || decision.equals("Denied")){
             reimbursementQueue.removeFirstOccurrence(reimbursement);
@@ -103,7 +103,7 @@ public class ReimbursementDao {
     }
 
     public Set<Reimbursement> getAllReimbursementRequests(){
-        String sql = "SELECT * FROM reimbursements;";
+        String sql = "SELECT * FROM reimbursements ORDER BY reimbursement_id ASC;";
         Set<Reimbursement> reimbursements = new HashSet<>();
         try{
             PreparedStatement pstmt = connection.prepareStatement(sql);
@@ -123,7 +123,7 @@ public class ReimbursementDao {
 
     public Set<Reimbursement> getAllReimbursementsForAUser(String username){
         Set<Reimbursement> reimbursements= new HashSet<>();
-        String sql = "SELECT * FROM reimbursements WHERE username = ?";
+        String sql = "SELECT * FROM reimbursements WHERE username = ? ORDER BY reimbursement_id ASC;";
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, username);
@@ -143,7 +143,7 @@ public class ReimbursementDao {
     public Set<Reimbursement> filterByApproval(String approvedType){
         Set<Reimbursement> reimbursements = new HashSet<>();
         String sql = "SELECT * FROM reimbursements " +
-                "WHERE approved = ?";
+                "WHERE approved = ? ORDER BY reimbursement_id ASC;";
         try{
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, approvedType);

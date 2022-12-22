@@ -1,6 +1,7 @@
 package com.revature.persistence;
 import java.sql.*;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.revature.baseObjects.User;
@@ -61,14 +62,14 @@ public class UserDao {
 
     }
     public void update(User user){
-        String sql = "UPDATE USERS SET first_name = ?, last_name = ?, username = ?, password = ? WHERE user_id = ?;";
+        String sql = "UPDATE USERS SET first_name = ?, last_name = ?, password = ?, title = ? WHERE username = ?;";
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, user.getFirstName());
             pstmt.setString(2, user.getLastName());
-            pstmt.setString(3, user.getUsername());
-            pstmt.setString(4, user.getPassword());
-            pstmt.setInt(5, user.getUserId());
+            pstmt.setString(3, user.getPassword());
+            pstmt.setString(4, user.getUsername());
+            pstmt.setString(5, user.getTitle());
             pstmt.executeUpdate();
         }catch (SQLException e){
             throw new RuntimeException();
@@ -80,7 +81,7 @@ public class UserDao {
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql);
             ResultSet rs = pstmt.executeQuery();
-            Set<User> setUsers = new HashSet<>();
+            Set<User> setUsers = new LinkedHashSet<>();
             while (rs.next()){
                 User user = new User(rs.getInt("user_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("username"),
                         User.getDecryptedPassword(rs.getString("password")), rs.getString("title"));
@@ -97,11 +98,14 @@ public class UserDao {
         String sql = "Select * FROM users WHERE username  = ?;";
         //User user = new User();
         try{
-            PreparedStatement pstmt = connection.prepareStatement(sql);
+            PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, username);
             ResultSet rs = pstmt.executeQuery();
-            User user = new User(rs.getInt("user_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("username"),
+            if (rs.next()) {
+                User user = new User(rs.getInt("user_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("username"),
                         rs.getString("password"), rs.getString("title"));
-            return user;
+                return user;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

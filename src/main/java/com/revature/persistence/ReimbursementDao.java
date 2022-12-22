@@ -1,8 +1,7 @@
 package com.revature.persistence;
 import java.sql.*;
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
 import com.revature.baseObjects.*;
 import java.util.ArrayDeque;
 import java.sql.Timestamp;
@@ -104,7 +103,7 @@ public class ReimbursementDao {
 
     public Set<Reimbursement> getAllReimbursementRequests(){
         String sql = "SELECT * FROM reimbursements ORDER BY reimbursement_id ASC;";
-        Set<Reimbursement> reimbursements = new HashSet<>();
+        Set<Reimbursement> reimbursements = new LinkedHashSet<>();
         try{
             PreparedStatement pstmt = connection.prepareStatement(sql);
             ResultSet rs = pstmt.executeQuery();
@@ -122,7 +121,7 @@ public class ReimbursementDao {
     }
 
     public Set<Reimbursement> getAllReimbursementsForAUser(String username){
-        Set<Reimbursement> reimbursements= new HashSet<>();
+        Set<Reimbursement> reimbursements= new LinkedHashSet<>();
         String sql = "SELECT * FROM reimbursements WHERE username = ? ORDER BY reimbursement_id ASC;";
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql);
@@ -141,7 +140,7 @@ public class ReimbursementDao {
         return reimbursements;
     }
     public Set<Reimbursement> filterByApproval(String approvedType){
-        Set<Reimbursement> reimbursements = new HashSet<>();
+        Set<Reimbursement> reimbursements = new LinkedHashSet<>();
         String sql = "SELECT * FROM reimbursements " +
                 "WHERE approved = ? ORDER BY reimbursement_id ASC;";
         try{

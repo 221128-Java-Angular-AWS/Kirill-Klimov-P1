@@ -54,6 +54,7 @@ public class JavalinApp {
         app.get("/reimbursement", JavalinApp::getAllReimbursements);
         app.get("/reimbursement/approved", JavalinApp::getAllApprovedReimbursements);
         app.get("/logs", JavalinApp::viewLogs);
+        app.patch("/users/title", JavalinApp::changeRole);
         app.get("/user/reimbursements", JavalinApp::getMyReimbursements);
     }
 
@@ -69,9 +70,7 @@ public class JavalinApp {
         }
     }
     public static void ping(Context ctx){
-
         ctx.result("pong!!");
-        ctx.removeCookie("ve");
         ctx.status(200);
     }
 
@@ -87,7 +86,12 @@ public class JavalinApp {
             String lastName = ctx.queryParam("lastName");
             String username = ctx.queryParam("username");
             String password = ctx.queryParam("password");
-            String title  = ctx.queryParam("title");
+            String title;
+            if (ctx.queryParam("title")==null || (ctx.queryParam("title")!="Manager" && ctx.queryParam("title")!="Employee")){
+                title = "Employee";
+            } else{
+                title = ctx.queryParam("title");
+            }
             if (userService.usernameExists(username)){
                 ctx.result("This username is taken!");
                 ctx.status(409);
@@ -103,6 +107,26 @@ public class JavalinApp {
 
     }
 
+    public static void changeRole(Context ctx){
+        Map<String, String> cookieMap = ctx.cookieMap();
+        if (checkPermission(ctx, "Manager")){
+            String newRole = ctx.queryParam("newRole");
+            if(newRole.equals("Manager") || newRole.equals("Employee")) {
+                String username = ctx.queryParam("username");
+                User user = userService.getUserWithUsername(username);
+                user.setTitle(newRole);
+                userService.updateUser(user);
+                ctx.status(200);
+            }else{
+                ctx.result("Something went wrong in your request");
+                ctx.status(404);
+            }
+        }
+    }
+    /*
+    public static void updateMyAccount(Context ctx){
+
+    }*/
     public static void getAllUsers(Context ctx){
         if (checkPermission(ctx, "Manager")) {
             Set<User> users = userService.getAllUsers();
@@ -244,7 +268,7 @@ public class JavalinApp {
 
     public static void logout(Context ctx) {
         if(ctx.cookieMap().isEmpty()){
-            ctx.result("You are not logged in atm");
+            ctx.result("You are not logged in at the moment");
             ctx.status(200);
         } else{
             Map<String, String> cookieMap = ctx.cookieMap();

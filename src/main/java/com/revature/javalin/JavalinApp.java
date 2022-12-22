@@ -111,16 +111,16 @@ public class JavalinApp {
         Map<String, String> cookieMap = ctx.cookieMap();
         if (checkPermission(ctx, "Manager")){
             String newRole = ctx.queryParam("newRole");
-            //if(newRole.equals("Manager") || newRole.equals("Employee")) {
+            if(newRole.equals("Manager") || newRole.equals("Employee")) {
                 String username = ctx.queryParam("username");
                 User user = userService.getUserWithUsername(username);
                 user.setTitle(newRole);
                 userService.updateUser(user);
                 ctx.status(200);
-            //}else{
-            //    ctx.result("You must specify either Manager or Employee as update.");
-            //    ctx.status(404);
-           // }
+            }else{
+                ctx.result("You must specify either Manager or Employee as update.");
+                ctx.status(404);
+            }
         }
     }
 

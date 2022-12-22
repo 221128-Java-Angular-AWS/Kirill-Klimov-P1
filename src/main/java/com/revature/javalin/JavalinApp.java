@@ -17,6 +17,7 @@ import io.javalin.http.HttpStatus;
 import io.javalin.http.util.CookieStore;
 
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.Set;
@@ -43,16 +44,17 @@ public class JavalinApp {
 
     private static void init(int port) {
         app = Javalin.create().start(port);
-        app.get("/ping", JavalinApp::ping);
+        //app.get("/ping", JavalinApp::ping);
         app.post("/createUser", JavalinApp::postNewUser);
         app.get("/getAllUsers", JavalinApp::getAllUsers);
         app.post("/addTicket", JavalinApp::addReimbursement);
         app.post("/login", JavalinApp::login);
-        app.get("/redirect",  JavalinApp:: redirectEx1);
-        app.post("/addCk", JavalinApp::addCookies);
+        //app.get("/redirect",  JavalinApp:: redirectEx1);
+        //app.post("/addCk", JavalinApp::addCookies);
         app.get("/logout", JavalinApp::logout);
+        app.post("/makeNewUser", JavalinApp::postNewUser);
         app.post("/approveDeny", JavalinApp::approveOrDeny);
-        app.post("/getCk", JavalinApp::getCookies);
+        //app.post("/getCk", JavalinApp::getCookies);
         app.get("/getAllReimbursements/denied", JavalinApp::getAllDeniedReimbursements);
         //app.get("/getAllReimbursements/pending", JavalinApp::getAllPendingReimbursements);
         app.get("/getAllReimbursements/pending", JavalinApp::getPendingReimbursements);
@@ -60,9 +62,22 @@ public class JavalinApp {
         app.get("/getAllReimbursements", JavalinApp::getAllReimbursements);
         //app.get("/getIncompleteReimbursements", JavalinApp::getPendingReimbursements);
         app.get("/getAllReimbursements/approved", JavalinApp::getAllApprovedReimbursements);
-        app.get("/viewMyTickets", JavalinApp::getReimbursements);
+        app.get("/login/viewMyTickets", JavalinApp::getReimbursements);
     }
 
+    public static boolean checkPermission(Context ctx, String userAccessor){
+        Map<String, String> cookieMap = ctx.cookieMap();
+        if(ctx.cookieMap().containsValue(userAccessor)){
+            return true;
+        }
+        else {
+            ctx.result("You need to log in as a " +userAccessor+" to use this functionality!");
+            ctx.status(401);
+            return false;
+        }
+    }
+
+    /*
     public static void ping(Context ctx){
 
         ctx.result("pong!!");
@@ -85,7 +100,24 @@ public class JavalinApp {
         cookie0.setMaxAge(9000000);
         ctx.cookie(cookie0);
         ctx.result(ctx.cookieMap().toString());
+    }*/
+    public static void postNewUser(Context ctx){
+        if (checkPermission(ctx, "Manager")){
+            //ctx.result(ctx.queryParam("lastName")+ ctx.queryParam("lastName") + ctx.queryParam("firstName"));
+            String firstName = ctx.queryParam("firstName");
+            String lastName = ctx.queryParam("lastName");
+            String username = ctx.queryParam("username");
+            String password = ctx.queryParam("password");
+            String title  = ctx.queryParam("title");
+            User user = new User(firstName, lastName, username, password, title);
+            ctx.json(user);
+            //User user = ctx.bodyAsClass(User.class);
+            userService.registerNewUser(user);
+            ctx.status(201);
+        }
+
     }
+    /*
     public static void postNewUser(Context ctx){
         Map<String, String> cookieMap = ctx.cookieMap();
         if (ctx.cookieMap().isEmpty() || ctx.cookieMap().containsValue("Employee")){
@@ -110,98 +142,63 @@ public class JavalinApp {
             ctx.status(400);
         }
 
-    }
+    }*/
 
     public static void getAllUsers(Context ctx){
-        Map<String, String> cookieMap = ctx.cookieMap();
-        if (ctx.cookieMap().isEmpty() || ctx.cookieMap().containsValue("Employee")){
-            ctx.result("You need to log in as a manager to see the request.");
-            ctx.status(401);
-        }
-        else if (cookieMap.containsValue("Manager")){
+        //Map<String, String> cookieMap = ctx.cookieMap();
+        if (checkPermission(ctx, "Manager")){
             Set<User> users = userService.getAllUsers();
             ctx.json(users);
             ctx.status(200);
         }
-        else {
-            ctx.result("This user is not recognized as an Employee or Manager");
-            ctx.status(400);
-        }
     }
 
     public static void getAllReimbursements(Context ctx) {
-        Map<String, String> cookieMap = ctx.cookieMap();
-        if (cookieMap.isEmpty() || cookieMap.containsValue("Employee")) {
-            ctx.result("You must be signed in as a Manager to use this feature");
-            ctx.status(401);
-        } else if (cookieMap.containsValue("Manager")){
-            Set<Reimbursement> myReimbursements= reimbursementService.getAllReimbursements();
+        if (checkPermission(ctx, "Manager")) {
+            Set<Reimbursement> myReimbursements = reimbursementService.getAllReimbursements();
             ctx.json(myReimbursements);
+            ctx.status(200);
         }
     }
+
     public static void getAllPendingReimbursements(Context ctx) {
-        Map<String, String> cookieMap = ctx.cookieMap();
-        if (cookieMap.isEmpty() || cookieMap.containsValue("Employee")) {
-            ctx.result("You must be signed in as a Manager to use this feature");
-            ctx.status(401);
-        } else if (cookieMap.containsValue("Manager")){
+        if (checkPermission(ctx, "Manager")){
             Set<Reimbursement> myReimbursements= reimbursementService.getAllReimbursementsFilterByApproval("Pending");
             ctx.json(myReimbursements);
-        }else {
-            ctx.result("This user is not recognized as an Employee or Manager");
-            ctx.status(400);
+            ctx.status(200);
         }
     }
 
     public static void printQueue(Context ctx){
-        Map<String, String> cookieMap = ctx.cookieMap();
-        if (cookieMap.isEmpty() || cookieMap.containsValue("Employee")) {
-            ctx.result("You must be signed in as a Manager to use this feature");
-            ctx.status(401);
-        } else if (cookieMap.containsValue("Manager")) {
+        if (checkPermission(ctx, "Manager")){
             ArrayDeque<Reimbursement> arrDeque = reimbursementService.getQueueOfReimbursements();
             ctx.json(arrDeque);
+            ctx.status(200);
         }
     }
     public static void getAllDeniedReimbursements(Context ctx) {
-        Map<String, String> cookieMap = ctx.cookieMap();
-        if (cookieMap.isEmpty() || cookieMap.containsValue("Employee")) {
-            ctx.result("You must be signed in as a Manager to use this feature");
-            ctx.status(401);
-        } else if (cookieMap.containsValue("Manager")){
+        if (checkPermission(ctx, "Manager")){
             Set<Reimbursement> myReimbursements= reimbursementService.getAllReimbursementsFilterByApproval("Denied");
             ctx.json(myReimbursements);
-        }else {
-            ctx.result("This user is not recognized as an Employee or Manager");
-            ctx.status(400);
+            ctx.status(200);
         }
     }
     public static void getAllApprovedReimbursements(Context ctx) {
-        Map<String, String> cookieMap = ctx.cookieMap();
-        if (cookieMap.isEmpty() || cookieMap.containsValue("Employee")) {
-            ctx.result("You must be signed in as a Manager to use this feature");
-            ctx.status(401);
-        } else if (cookieMap.containsValue("Manager")){
+        if (checkPermission(ctx, "Manager")){
             Set<Reimbursement> myReimbursements= reimbursementService.getAllReimbursementsFilterByApproval("Approved");
             ctx.json(myReimbursements);
-        }else {
-            ctx.result("This user is not recognized as an Employee or Manager");
-            ctx.status(400);
+            ctx.status(200);
         }
     }
 
     public static void approveOrDeny(Context ctx) {
-        Map<String, String> cookieMap = ctx.cookieMap();
-        if (cookieMap.isEmpty() || cookieMap.containsValue("Employee")) {
-            ctx.result("You must be signed in as a Manager to use this feature");
-            ctx.status(401);
-        } else if (cookieMap.containsValue("Manager")){
+        if (checkPermission(ctx, "Manager")){
             Integer id = Integer.valueOf(ctx.queryParam("ticketId"));
             String response = ctx.queryParam("decision");
             reimbursementService.approveDeny(id, response);
-        }else {
-            ctx.result("This user is not recognized as an Employee or Manager");
-            ctx.status(400);
+            Reimbursement reimbursement = reimbursementService.getReimbursementById(id);
+            ctx.json(reimbursement);
+            ctx.status(200);
         }
     }
     /*

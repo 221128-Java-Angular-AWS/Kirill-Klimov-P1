@@ -5,7 +5,7 @@ import java.util.Objects;
 public class Reimbursement {
     private Integer ticketId;
     private Double amount;
-    private String approved = "Pending";
+    private String approved;
     private String description;
     private String username;
 
@@ -14,7 +14,7 @@ public class Reimbursement {
 
     public Reimbursement(Integer ticketId, Double amount, String approved, String description, String username) {
         this.ticketId = ticketId;
-        //this.approved = approved;
+        this.approved = approved;
         this.description = description;
         this.amount = amount;
         this.username = username;

@@ -103,7 +103,7 @@ public class ReimbursementDao {
     }
 
     public Set<Reimbursement> getAllReimbursementRequests(){
-        String sql = "SELECT * FROM reimbursements";
+        String sql = "SELECT * FROM reimbursements;";
         Set<Reimbursement> reimbursements = new HashSet<>();
         try{
             PreparedStatement pstmt = connection.prepareStatement(sql);
@@ -170,7 +170,6 @@ public class ReimbursementDao {
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, reimbursement.getApproved().toString());
-
         } catch (SQLException e){
             throw new RuntimeException();
         }

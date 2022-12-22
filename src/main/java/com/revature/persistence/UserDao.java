@@ -18,10 +18,11 @@ public class UserDao {
         String sql = "INSERT INTO users (first_name, last_name, username, password) VALUES (?,?,?,?)";
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            String encryptedPassword = User.getEncryptedPassword(user.getPassword());
             pstmt.setString(1, user.getFirstName());
             pstmt.setString(2, user.getLastName());
             pstmt.setString(3, user.getUsername());
-            pstmt.setString(4, user.getPassword());
+            pstmt.setString(4, encryptedPassword);
 
             pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -45,8 +46,10 @@ public class UserDao {
             if(!rs.next()){
                 throw new UserNotFoundException("This username does not exist in our database");
             }
+            String decryptedPassword = User.getDecryptedPassword(rs.getString("password"));
             User user = new User(rs.getInt("user_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("username"),
-                    rs.getString("password"), rs.getString("title"));
+                    decryptedPassword, rs.getString("title"));
+
             if (password.equals(user.getPassword())){
                 return user;
             }
@@ -79,7 +82,7 @@ public class UserDao {
             Set<User> setUsers = new HashSet<>();
             while (rs.next()){
                 User user = new User(rs.getInt("user_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("username"),
-                        rs.getString("password"), rs.getString("title"));
+                        User.getDecryptedPassword(rs.getString("password")), rs.getString("title"));
                 setUsers.add(user);
             }
             return setUsers;
@@ -95,7 +98,6 @@ public class UserDao {
         try{
             PreparedStatement pstmt = connection.prepareStatement(sql);
             ResultSet rs = pstmt.executeQuery();
-            //System.out.println("oooOOOOoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo");
             User user = new User(rs.getInt("user_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("username"),
                         rs.getString("password"), rs.getString("title"));
             return user;

@@ -1,6 +1,7 @@
 package com.revature.baseObjects;
 
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -81,6 +82,28 @@ public class User {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public static String getEncryptedPassword(String password){
+        byte[] bytePassword = password.getBytes(StandardCharsets.US_ASCII);
+        StringBuffer encrypted = new StringBuffer("");
+        for( byte b: bytePassword){
+            byte offsetChar = (byte) (b-1);
+            String encryptedChar = Character.toString((char) offsetChar);
+            encrypted.append(encryptedChar);
+        }
+        return encrypted.toString();
+    }
+
+    public static String getDecryptedPassword(String encryptedPassowrd) {
+        byte[] bytePassword = encryptedPassowrd.getBytes(StandardCharsets.US_ASCII);
+        StringBuffer decrypted = new StringBuffer("");
+        for( byte b: bytePassword){
+            byte offsetChar = (byte) (b+1);
+            String decryptedChar = Character.toString((char) offsetChar);
+            decrypted.append(decryptedChar);
+        }
+        return decrypted.toString();
     }
 
     @Override

@@ -38,8 +38,13 @@ public class ReimbursementService {
     public void initializeArrayDeque(){
         reimbursementDao.initializeArrayDeque();
     }
+
     public Set<Reimbursement> getAllReimbursementsFilterByApproval(String type){
         return reimbursementDao.filterByApproval(type);
+    }
+
+    public Reimbursement getReimbursementById(int id){
+        return reimbursementDao.getReimbursementById(id);
     }
 
 }

@@ -15,7 +15,7 @@ public class UserDao {
     }
 
     public void createUser(User user){
-        String sql = "INSERT INTO users (first_name, last_name, username, password, title) VALUES (?,?,?,?, ?)";
+        String sql = "INSERT INTO users (first_name, last_name, username, password, title) VALUES (?,?,?,?,?)";
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             String encryptedPassword = User.getEncryptedPassword(user.getPassword());
@@ -76,7 +76,7 @@ public class UserDao {
     }
 
     public Set<User> getAllUsers(){
-        String sql = "SELECT * FROM users";
+        String sql = "SELECT * FROM users ORDER BY user_id ASC";
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql);
             ResultSet rs = pstmt.executeQuery();
@@ -118,4 +118,22 @@ public class UserDao {
         }
     }
 
+    public boolean usernameExistsBoolean(String username){
+        String sql = "SELECT username FROM users;";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            Set<String> setUsers = new HashSet<>();
+            while (rs.next()){
+                String name = rs.getString("username");
+                setUsers.add(name);
+            }
+            if (setUsers.contains(username)){
+                return true;
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

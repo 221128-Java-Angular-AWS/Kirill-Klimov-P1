@@ -29,9 +29,11 @@ public class UserService {
     }
 
     public void createUser(User user){
-        System.out.println("in method");
         userDao.createUser(user);
     }
 
+    public boolean usernameExists(String username){
+        return userDao.usernameExistsBoolean(username);
+    }
 
 }
